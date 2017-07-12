@@ -1,0 +1,42 @@
+<meta charset="utf-8">
+<title>Professions leveling calculator</title>
+<!--WoWHead Tooltips-->
+<script type="text/javascript" src="http://wow.zamimg.com/widgets/power.js"></script>
+<!--end of WoWHead Tooltips-->
+<!--JQuery-->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<!--end of JQuery-->
+<link rel="stylesheet" type="text/css" href="style.css">
+<!--temporarily include JSON files as JS files-->
+<script type="text/javascript" src="item data/itemData.js"></script>
+<script type="text/javascript" src="recipes/alchemy.js"></script>
+<script type="text/javascript" src="recipes/cooking.js"></script>
+<!--end of JS temporary files-->
+<script type="text/javascript" src="script.js"></script>
+<script type="text/javascript" src="classes/Item.js"></script>
+<script type="text/javascript" src="classes/Profession.js"></script>
+<script type="text/javascript" src="classes/Recipe.js"></script>
+<body>
+    <h1>Profession leveling calculator</h1>
+    <h2>Owned items</h2>
+    <div id="owned-items"></div>
+    <div class="ui-widget">
+        <label for="add">Add item:</label>
+        <input id="add">
+    </div>
+    <div class="ui-widget">
+        <label for="profession">Profession:</label>
+        <select id="profession"></select>
+    </div>
+    <div id="recipes-container">
+        <table id="recipes" cellspacing="0">
+            <thead>
+                <tr><th>Name</th><th>Recipe</th><th colspan="3">Breakpoints</th><th>Average skill gain</th><th>Press these buttons to plan your production</th></tr>
+            </thead>
+        </table>
+    </div>
+    <div id="production-list"></div>
+    <div id="output"></div>
+</body>

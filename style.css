@@ -1,0 +1,53 @@
+body>div{
+	padding:8px;
+}
+
+body{
+	background: #181818;
+	color:white;
+}
+
+.orange{
+	color:#ff8040;
+}
+
+.yellow{
+	color:#ff0;
+}
+
+.gray{
+	color:#808080;
+}
+
+a{
+	color:white;
+}
+
+#recipes tr{
+	padding:4px;
+}
+
+#recipes th{
+	background-color: #272727;
+}
+
+#recipes, #output-table{
+	width:100%;
+	background-color: #363636;
+	text-align: center;
+}
+
+.even-row{
+	background-color: #454545;
+}
+
+.button{
+	cursor: pointer;
+	background-color: #0275d8;
+	display: inline-block;
+    line-height: 1.25;
+    vertical-align: middle;
+    padding: .5rem 1rem;
+    font-size: 1rem;
+    border-radius: .25rem;
+}

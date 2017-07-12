@@ -116,7 +116,12 @@ addEventListener('load', () => {
     chanceHeader.innerText = "Chance to be at this skill after production";
     header.appendChild(chanceHeader);
     table.appendChild(header);
-    var even = false;
+    var accumChanceHeader = document.createElement("th");
+    accumChanceHeader.innerText = "Chance to be at least at this skill after production";
+    header.appendChild(accumChanceHeader);
+    table.appendChild(header);
+    var previousRow;
+    var accumChance=1;
     for (var pair of currentSkillDistribution) {
       var chance = pair[1];
       if (chance) {
@@ -127,9 +132,13 @@ addEventListener('load', () => {
         var chanceTD = document.createElement("td");
         chanceTD.innerText = toFixed(pair[1] * 100) + '%';
         row.appendChild(chanceTD);
-        if (even) row.className = "even-row";
-        even = !even;
-        table.appendChild(row);
+        var accumChanceTD = document.createElement("td");
+        accumChanceTD.innerText = toFixed(accumChance * 100) + '%';
+        accumChance=accumChance-pair[1];
+        row.appendChild(accumChanceTD);
+        if(previousRow) table.insertBefore(row, previousRow);
+        else table.appendChild(row);
+        previousRow=row;
       }
     }
     document.getElementById("output").appendChild(table);

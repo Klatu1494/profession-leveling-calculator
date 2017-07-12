@@ -37,7 +37,7 @@ a{
 	text-align: center;
 }
 
-.even-row{
+#output tr:nth-child(even){
 	background-color: #454545;
 }
 

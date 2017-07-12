@@ -8,7 +8,7 @@ class Profession {
       select.appendChild(option);
       this.name = name;
       this.recipes = new Set();
-      this.skill = 1;
+      this.skill = 30;
       select.addEventListener("change", function() {
         onSelectHandler(self, this);
       });

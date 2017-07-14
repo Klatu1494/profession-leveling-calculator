@@ -1,8 +1,8 @@
 var array = [];
 for (var recipe of g_listviews.recipes.data) {
   var object = {
-    creationId: recipe.creates[0],
-    creationQuantity: recipe.creates[1],
+    creationId: (recipe.creates ? recipe.creates[0] : recipe.id),
+    creationQuantity: (recipe.creates ? recipe.creates[1] : 0),
     id: recipe.id,
     name: recipe.__tr.children[2].innerText,
     reagents: {},

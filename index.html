@@ -9,11 +9,18 @@
 <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <!--end of JQuery-->
 <link rel="stylesheet" type="text/css" href="style.css">
-<!--temporarily include JSON files as JS files-->
 <script type="text/javascript" src="item data/itemData.js"></script>
 <script type="text/javascript" src="recipes/alchemy.js"></script>
+<script type="text/javascript" src="recipes/blacksmithing.js"></script>
 <script type="text/javascript" src="recipes/cooking.js"></script>
-<!--end of JS temporary files-->
+<script type="text/javascript" src="recipes/enchanting.js"></script>
+<script type="text/javascript" src="recipes/engineering.js"></script>
+<script type="text/javascript" src="recipes/firstAid.js"></script>
+<script type="text/javascript" src="recipes/inscription.js"></script>
+<script type="text/javascript" src="recipes/jewelcrafting.js"></script>
+<script type="text/javascript" src="recipes/leatherworking.js"></script>
+<script type="text/javascript" src="recipes/mining.js"></script>
+<script type="text/javascript" src="recipes/tailoring.js"></script>
 <script type="text/javascript" src="script.js"></script>
 <script type="text/javascript" src="classes/Item.js"></script>
 <script type="text/javascript" src="classes/Profession.js"></script>
@@ -30,6 +37,10 @@
         <label for="profession">Profession:</label>
         <select id="profession"></select>
     </div>
+    <div class="ui-widget">
+        <label for="initial-skill">Initial skill:</label>
+        <input id="initial-skill" type="number" value="1" min="1" max="1000">
+    </div>
     <div id="recipes-container">
         <table id="recipes" cellspacing="0">
             <thead>
@@ -37,6 +48,10 @@
             </thead>
         </table>
     </div>
-    <div id="production-list"></div>
+    <div id="production-list-container">
+        <h2>Production list</h2>
+        <div id="production-list"></div>
+        <div id="produce-button" class="button">Produce</div>
+    </div>
     <div id="output"></div>
 </body>

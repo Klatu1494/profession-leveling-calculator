@@ -29,7 +29,7 @@ class Recipe {
   }
 
   craftable(recipes, currentRecipeIndex, getItemFromId) {
-    if (this.profession.skill < this.orangeSkill) return false;
+    if (this.graySkill <= this.profession.skill || this.profession.skill < this.orangeSkill) return false;
     var craftable = true;
     for (var id in this.reagents) {
       var quantity = getItemFromId(parseInt(id)).quantity;
@@ -71,8 +71,15 @@ class Recipe {
     var reagentsTD = document.createElement("td");
     var buttonTD = document.createElement("td");
     var button = document.createElement("div");
-    link.rel = "item=" + this.creationId;
-    link.href = 'http://www.wowhead.com/item=' + this.creationId;
+    var linkJoin = 'spell=';
+    if (this.creationQuantity) {
+      var span = document.createElement("span");
+      span.innerText = this.creationQuantity + " × ";
+      nameTD.appendChild(span);
+      linkJoin = 'item='
+    }
+    link.rel = linkJoin + this.creationId;
+    link.href = 'http://www.wowhead.com/' + linkJoin + this.creationId;
     link.innerText = "Loading...";
     nameTD.appendChild(link);
     orangeTD.className = "orange";
@@ -84,9 +91,10 @@ class Recipe {
     avgChanceTD.innerText = this.averageChanceToLevelUp(new Map().set(profession.skill, 1));
     for (var id in this.reagents) {
       var span = document.createElement("span");
-      span.innerText = this.reagents[id] + " x ";
+      span.innerText = this.reagents[id] + " × ";
       link = document.createElement("a");
-      link.href = "item=" + id;
+      link.rel = "item=" + id;
+      link.href = 'http://www.wowhead.com/item=' + id;
       link.innerText = "Loading...";
       reagentsTD.appendChild(span);
       reagentsTD.appendChild(link);

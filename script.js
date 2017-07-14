@@ -1,5 +1,5 @@
 function toFixed(number) {
-  number = number.toFixed(Math.max(Math.floor(-Math.log10(number) + 2), 2));
+  number = number.toFixed(Math.min(20, Math.max(Math.floor(-Math.log10(number) + 2), 2)));
   if (number[number.length - 1] === '0') number = number.substring(0, number.length - 1);
   if (number[number.length - 1] === '0') number = number.substring(0, number.length - 1);
   if (number[number.length - 1] === '.') number = number.substring(0, number.length - 1);
@@ -28,17 +28,12 @@ addEventListener('load', () => {
   function updateRecipes() {
     var recipesTable = document.getElementById("recipes");
     var recipes = recipesTable.children;
-    for (var i = 1; i < recipes.length; i++) {
-      recipes[i].style.display = "none";
-    }
+    for (var i = 1; i < recipes.length; i++) recipes[i].remove();
     var i = 0;
     for (var recipe of currentProfession.recipes) {
       if (recipe.craftable(productionList, productionList.length, getItemFromId)) {
-        var element = recipe.element;
-        element.style.display = "";
+        recipesTable.appendChild(recipe.element);
         recipe.avgChanceTD.innerText = recipe.averageChanceToLevelUp(currentSkillDistribution);
-        if (i % 2) element.className = "even-row";
-        else element.className = "";
         i++;
       }
     }
@@ -97,9 +92,34 @@ addEventListener('load', () => {
   }
 
   function updateProductionListDiv() {
-    var productionList = document.getElementById("production-list");
-    var newDiv = document.createElement("div");
-    var link;
+    function deleteFunction() {
+      productionList.splice(this, 1);
+      currentSkillDistribution = calculateSkillDistribution();
+      updateRecipes();
+      updateProductionListDiv();
+      updateOutput();
+    }
+
+    var productionListDiv = document.getElementById("production-list");
+    for (var i = productionListDiv.children.length - 1; 0 <= i; i--) productionListDiv.children[i].remove();
+    for (var i = 0; i < productionList.length; i++) {
+      var recipe = productionList[i];
+      var newDiv = document.createElement("div");
+      var quantity = document.createElement("span");
+      quantity.innerText = recipe.creationQuantity + " × ";
+      newDiv.appendChild(quantity);
+      var link = document.createElement("a");
+      link.rel = "item=" + recipe.creationId;
+      link.href = "http://www.wowhead.com/item=" + recipe.creationId;
+      link.innerText = "Loading...";
+      newDiv.appendChild(link);
+      var deleteX = document.createElement("span");
+      deleteX.addEventListener("click", deleteFunction.bind(i));
+      deleteX.className = "delete";
+      newDiv.appendChild(deleteX);
+      productionListDiv.appendChild(newDiv);
+    }
+    $WowheadPower.refreshLinks();
   }
 
   function updateOutput() {
@@ -120,11 +140,11 @@ addEventListener('load', () => {
     accumChanceHeader.innerText = "Chance to be at least at this skill after production";
     header.appendChild(accumChanceHeader);
     table.appendChild(header);
-    var previousRow;
-    var accumChance=1;
+    var accumChance = 0;
+    currentSkillDistribution = new Map([...currentSkillDistribution.entries()].sort((a, b) => b[0] - a[0]));
     for (var pair of currentSkillDistribution) {
       var chance = pair[1];
-      if (chance) {
+      if (0 < chance) {
         var row = document.createElement("tr");
         var skillTD = document.createElement("td");
         skillTD.innerText = pair[0];
@@ -133,25 +153,29 @@ addEventListener('load', () => {
         chanceTD.innerText = toFixed(pair[1] * 100) + '%';
         row.appendChild(chanceTD);
         var accumChanceTD = document.createElement("td");
+        accumChance = accumChance + pair[1];
         accumChanceTD.innerText = toFixed(accumChance * 100) + '%';
-        accumChance=accumChance-pair[1];
         row.appendChild(accumChanceTD);
-        if(previousRow) table.insertBefore(row, previousRow);
-        else table.appendChild(row);
-        previousRow=row;
+        table.appendChild(row);
+        previousRow = row;
       }
     }
     document.getElementById("output").appendChild(table);
   }
 
-  function selectProfession(profession, select) {
+  function onSelectHandler(profession, select) {
     if (select.value === profession.name) {
-      currentProfession = profession;
-      productionList = [];
-      currentSkillDistribution = calculateSkillDistribution();
-      updateRecipes();
-      updateOutput();
+      selectProfession(profession)
     }
+  }
+
+  function selectProfession(profession) {
+    currentProfession = profession;
+    productionList = [];
+    document.getElementById("initial-skill").value = profession.skill;
+    currentSkillDistribution = calculateSkillDistribution();
+    updateRecipes();
+    updateOutput();
   }
 
   Item.prototype.getItemFromName = getItemFromName;
@@ -164,11 +188,21 @@ addEventListener('load', () => {
     nameMap.set(a.name, [...(nameMap.get(a.name) || []), new Item(parseInt(a.id), a.name)]);
   }
   var professions = [
-    new Profession('Alchemy', alchemy, addToProductionList, selectProfession),
-    new Profession('Cooking', cooking, addToProductionList, selectProfession)
+    new Profession('Alchemy', alchemy, addToProductionList, onSelectHandler),
+    new Profession('Blacksmithing', blacksmithing, addToProductionList, onSelectHandler),
+    new Profession('Cooking', cooking, addToProductionList, onSelectHandler),
+    new Profession('Enchanting', enchanting, addToProductionList, onSelectHandler),
+    new Profession('Engineering', engineering, addToProductionList, onSelectHandler),
+    new Profession('First aid', firstAid, addToProductionList, onSelectHandler),
+    new Profession('Inscription', inscription, addToProductionList, onSelectHandler),
+    new Profession('Jewelcrafting', jewelcrafting, addToProductionList, onSelectHandler),
+    new Profession('Leatherworking', leatherworking, addToProductionList, onSelectHandler),
+    new Profession('Mining', mining, addToProductionList, onSelectHandler),
+    new Profession('Tailoring', tailoring, addToProductionList, onSelectHandler)
   ];
   var recipes = [];
-  var currentProfession = professions[0];
+  var currentProfession;
+  selectProfession(professions[0]);
   var productionList = [];
   var currentSkillDistribution = calculateSkillDistribution();
   for (var profession of professions) {
@@ -184,7 +218,7 @@ addEventListener('load', () => {
         var name = ui.item.value;
         var object = getItemFromName(name, false);
         object.quantity++;
-        localStorage.setItem(object.id, object.quantity)
+        localStorage.setItem(object.id, object.quantity);
         updateOwnedItems(name);
         document.getElementById("add").value = "";
         return false;
@@ -194,6 +228,32 @@ addEventListener('load', () => {
   for (var name of itemNames) {
     updateOwnedItems(name, false);
   }
+  document.getElementById("initial-skill").addEventListener("change", function() {
+    currentProfession.skill = this.valueAsNumber;
+    currentSkillDistribution = calculateSkillDistribution();
+    updateRecipes();
+    updateOutput();
+  });
+  document.getElementById("produce-button").addEventListener("click", () => {
+    do {
+      currentProfession.skill = parseInt(prompt("How many skill points do have after producing those items?"));
+    } while (!isFinite(currentProfession.skill) && currentSkillDistribution.get(currentProfession.skill));
+    document.getElementById("initial-skill").value = currentProfession.skill;
+    for (var recipe of productionList) {
+      var item = getItemFromId(recipe.creationId);
+      localStorage.setItem(item.id, item.quantity + recipe.creationQuantity);
+      updateOwnedItems(item.name, false);
+      for (var reagentId in recipe.reagents) {
+        var item = getItemFromId(parseInt(reagentId));
+        localStorage.setItem(item.id, item.quantity - recipe.reagents[reagentId]);
+        updateOwnedItems(item.name, false);
+      }
+    }
+    productionList = [];
+    currentSkillDistribution = calculateSkillDistribution();
+    updateRecipes();
+    updateOutput();
+  });
   updateRecipes();
   updateOutput();
 });

@@ -23,22 +23,22 @@ a{
 	color:white;
 }
 
-#recipes tr{
-	padding:4px;
-}
-
-#recipes th{
-	background-color: #272727;
-}
-
-#recipes, #output-table{
+table{
 	width:100%;
-	background-color: #363636;
 	text-align: center;
 }
 
-#output tr:nth-child(even){
-	background-color: #454545;
+#recipes tr, #output tr{
+	background-color: #363636;
+	padding:4px;
+}
+
+th{
+	padding: 4px;
+}
+
+th, #recipes tr:nth-child(odd), #output tr:nth-child(odd){
+	background-color: #272727;
 }
 
 .button{
@@ -50,4 +50,27 @@ a{
     padding: .5rem 1rem;
     font-size: 1rem;
     border-radius: .25rem;
+    margin: 4px;
+}
+
+.delete{
+	color: red;
+	font-weight: bolder;
+	cursor: pointer;
+}
+
+.delete:before{
+	content: " ×";
+}
+
+#production-list>div{
+	padding: 4px;
+}
+
+#production-list>div:nth-child(even){
+	background-color: #272727;
+}
+
+#production-list>div:nth-child(odd){
+	background-color: #363636;
 }
